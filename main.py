@@ -4,6 +4,8 @@ from app._process import _readtxt, _create_content
 from app._blogger import blogger_sdk
 
 
+blogger = blogger_sdk(id='4691855219075129795')
+
 if __name__ == "__main__":
     while True:
         url = url
@@ -19,12 +21,10 @@ if __name__ == "__main__":
         list_href_old = _readtxt(fd_data + os.sep + "list.txt")
         list_href = set(list_href_new) ^ set(list_href_old)
         if list_href:
-            conn = blogger_sdk(id='4691855219075129795')
             for i in list_href:
                 url_href = f"{url}{i}"
-                print(url_href)
-                title, content = _create_content(url=url_href)
-                ports = conn._create_post(title=title,content=content)
+                title, content, meta, labels = _create_content(url=url_href)
+                ports = blogger._create_post(title=title,content=content, meta=meta, labels=labels)
                 print(ports)
                 break
         time.sleep(1000)
