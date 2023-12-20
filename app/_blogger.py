@@ -61,7 +61,8 @@ class blogger_sdk:
                     "id": self.id
                 },
                 "title": title,
-                "content": content
+                "content": content,
+                ""
             }
             result = self._req(url=self.url, data=data)
             return result
