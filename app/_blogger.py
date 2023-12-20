@@ -6,10 +6,16 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from googleapiclient.http import MediaFileUpload
+import webbrowser
+
 
 
 def _access_tokken(cer_path, token_path):
-    SCOPES = ["https://www.googleapis.com/auth/blogger"]
+    SCOPES = [
+        "https://www.googleapis.com/auth/blogger",
+        "https://www.googleapis.com/auth/drive.file"
+    ]
     creds = None
     if os.path.exists(token_path):
         creds = Credentials.from_authorized_user_file(token_path, SCOPES)
@@ -21,13 +27,17 @@ def _access_tokken(cer_path, token_path):
             creds = flow.run_local_server(port=0)
         with open(token_path, "w") as token:
             token.write(creds.to_json())
-    return creds.token
+    return creds
 
 class blogger_sdk:
     def __init__(self, id, key=authen['key']):
         self.id           = id
+        self.api_name     = 'drive'
+        self.api_version  = 'v3'
         self.url          = f"https://blogger.googleapis.com/v3/blogs/{self.id}/posts"
-        self.access_token = _access_tokken(authen['cer'], authen['token'])
+        self.credentials  = _access_tokken(authen['cer'], authen['token'])
+        self.access_token = self.credentials.token
+        self.service      = build(self.api_name, self.api_version, credentials=self.credentials)
         self.key          = key
         self.headers      = {
             "Authorization": f"Bearer {self.access_token}",
@@ -56,6 +66,27 @@ class blogger_sdk:
             }
             result = self._req(url=self.url, data=data)
             return result
+        except Exception as e:
+            print(e)
+            return False
+
+    def upload_image(self, file_path, title='', caption=''):
+        try:
+            media = MediaFileUpload(file_path, mimetype='image/jpeg')
+            request = self.service.blogs().get(blogId=self.id, view='ADMIN')
+            blog = request.execute()
+            body = {
+                'kind': 'blogger#post',
+                'blog': blog,
+                'title': title,
+                'content': caption,
+                'images': [{
+                    'url': file_path
+                }]
+            }
+            post = blogger_service.posts().insert(blogId=self.id, body=body).execute()
+            image_url = post['images'][0]['url']
+            return image_url
         except Exception as e:
             print(e)
             return False
