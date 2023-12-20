@@ -85,6 +85,7 @@ class blogger_sdk:
                 }]
             }
             post = blogger_service.posts().insert(blogId=self.id, body=body).execute()
+            print(post)
             image_url = post['images'][0]['url']
             return image_url
         except Exception as e:
