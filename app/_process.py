@@ -60,10 +60,8 @@ def _create_content(url):
     tags = []
     for h in gr_labels:
         text1 = _translator(h.text, "en")
-        text2 = str(text1).lower()
-        text3 = text2.replace(" ","_")
-        text4 = text2.replace(" ","-")
-        a_html = f"<a href='/search?q={text4}' title='{text1}'>#{text3}</a>"
+        text2 = str(text1).lower().replace(" ","-")
+        a_html = f"<a href='/search?q={text2}' title='{text1}'>#{text2}</a>"
         tags.append(a_html)
     content += f"<br><br><p>Tags: {', '.join(tags)}</p>"
     return title, content
@@ -83,6 +81,15 @@ def _image(url):
     except Exception as e:
         print(e)
         return False
+    # try:
+    #     request_site = Request(url, headers={"User-Agent": "Mozilla/5.0"})
+    #     with urllib.request.urlopen(request_site) as url:
+    #         f = io.BytesIO(url.read())
+    #         image = base64.b64encode(f.read()).decode("ascii")
+    #         return image
+    # except Exception as e:
+    #     print(e)
+    #     return False
 
 def _basedir():
     if getattr(sys, 'frozen', False):
