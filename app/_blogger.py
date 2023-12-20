@@ -71,7 +71,7 @@ class blogger_sdk:
 
     def upload_image(self, file_path, title='', caption=''):
         try:
-            media = MediaFileUpload(file_path, mimetype='image/jpeg')
+            media = MediaFileUpload(file_path, mimetype='image/*')
             request = self.service.blogs().get(blogId=self.id, view='ADMIN')
             blog = request.execute()
             body = {
