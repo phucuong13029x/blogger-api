@@ -54,7 +54,6 @@ class blogger_sdk:
             return error
         
     def _create_post(self, title:str, content:str):
-        print(title)
         try:
             data = {
                 "kind": "blogger#post",
