@@ -46,7 +46,7 @@ class blogger_sdk:
             error = json.loads(e.args[1])['error']['message']
             return error
         
-    def _create_post(self, title:str, content:str, meta:str="", labels:list=[], author:dict={"displayName":"Admin"}):
+    def _create_post(self, title:str, content:str, meta:str="", labels:list=[]):
         try:
             data = {
                 "kind": "blogger#post",
@@ -56,10 +56,7 @@ class blogger_sdk:
                 "title": title,
                 "content": content,
                 "labels": labels,
-                "customMetaData": meta,
-                "author": {
-                    "displayName":author['displayName']
-                }
+                "customMetaData": meta
             }
             result = self._req(url=self.url, data=data)
             return result
